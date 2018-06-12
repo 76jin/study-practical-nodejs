@@ -15,6 +15,27 @@ app.all('*', function (req, res) {
     );
 });
 
-http.createServer(app).listen(app.get('port'), function () {
-    console.log('Express.js server listening on port ' + app.get('port'));
-});
+// http.createServer(app).listen(app.get('port'), function () {
+//     console.log('Express.js server listening on port ' + app.get('port'));
+// });
+
+var server = http.createServer(app);
+var boot = function () {
+    server.listen(app.get('port'), function () {
+        console.log('Express.js server listening on port ' + app.get('port'));
+    });
+};
+
+var shutdown = function () {
+    server.close();
+};
+
+if (require.main === module) {
+    console.info('Running app...');
+    boot();
+} else {
+    console.info('Running app as a module. port:' + app.get('port'));
+    exports.boot = boot;
+    exports.shutdown = shutdown;
+    exports.port = app.get('port');
+}
